@@ -1,0 +1,56 @@
+.root {
+  display: grid;
+}
+
+.container {
+  padding: 0.5rem 1rem;
+  svg {
+    display: grid;
+  }
+}
+
+.color {
+  animation: rainbow 28s infinite linear;
+}
+
+@keyframes rainbow {
+  0% {
+    fill: rgba(255, 0, 0, 0.5);
+  }
+  8% {
+    fill: rgba(255, 165, 0, 0.5);
+  }
+  16% {
+    fill: rgba(255, 255, 0, 0.5);
+  }
+  24% {
+    fill: rgba(0, 128, 0, 0.5);
+  }
+  32% {
+    fill: rgba(0, 0, 255, 0.5);
+  }
+  40% {
+    fill: rgba(75, 0, 130, 0.5);
+  }
+  48% {
+    fill: rgba(238, 130, 238, 0.5);
+  }
+  56% {
+    fill: rgba(75, 0, 130, 0.5);
+  }
+  64% {
+    fill: rgba(0, 0, 255, 0.5);
+  }
+  72% {
+    fill: rgba(0, 128, 0, 0.5);
+  }
+  80% {
+    fill: rgba(255, 255, 0, 0.5);
+  }
+  88% {
+    fill: rgba(255, 165, 0, 0.5);
+  }
+  100% {
+    fill: rgba(255, 0, 0, 0.5);
+  }
+}

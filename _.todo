@@ -1,0 +1,23 @@
+
+✔ footer @done(22-01-20 18:40)
+✔ header @done(22-01-20 18:40)
+✔ layout @done(22-01-20 18:40)
+✔ marquee @done(22-01-20 18:40)
+☐ meta
+☐ chat 
+  tmi.js or twurple
+
+  emotes
+  https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0
+
+  bttv
+
+pages:
+  ✔ index @done(22-01-20 18:41)
+  ☐ afk
+  ☐ brb
+
+
+other: 
+  ☐ twitch bot
+    seperate project hosted on heroku

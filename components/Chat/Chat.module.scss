@@ -1,0 +1,16 @@
+.root {
+  width: 40rem;
+  height: 30rem;
+  overflow: hidden;
+  font-weight: 700;
+  padding: 1rem;
+  color: white;
+  text-shadow: 1px 1px 1px #000000, -1px -1px 1px #000000, 1px -1px 1px #000000,
+    -1px 1px 1px #000000, 0 0 3px #000000;
+}
+
+.container {
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
