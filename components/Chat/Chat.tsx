@@ -71,7 +71,7 @@ export const Chat = ({ badges }: ChatProps) => {
         nameSpan.style.columnGap = "0.25rem";
         nameSpan.style.alignItems = "center";
         nameSpan.appendChild(colorSpan);
-        nameSpan.appendChild(document.createTextNode(": "));
+        nameSpan.appendChild(document.createTextNode(":  "));
         itemDiv.appendChild(nameSpan);
 
         // handle message
