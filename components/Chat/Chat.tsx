@@ -152,6 +152,7 @@ export const Chat = ({}: ChatProps) => {
         if (chatRef.current.childNodes.length > 10) {
           chatRef.current.childNodes[0].remove();
         }
+        setTimeout(() => div.remove(), 60000);
         div.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     });
