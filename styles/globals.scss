@@ -38,10 +38,10 @@ a {
 }
 
 .message {
-  @extend .flex;
   word-break: break-word;
 }
 
 .emote {
+  margin: -0.5rem 0;
   object-fit: contain;
 }

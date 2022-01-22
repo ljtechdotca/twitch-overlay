@@ -1,18 +1,11 @@
+import { Emote } from "@types";
 import { useEffect, useRef } from "react";
 import tmi from "tmi.js";
 import styles from "./Chat.module.scss";
 
-interface Emote {
-  id: string;
-  start: number;
-  end: number;
-}
+export interface ChatProps {}
 
-export interface ChatProps {
-  badges: Record<string, any>;
-}
-
-export const Chat = ({ badges }: ChatProps) => {
+export const Chat = ({}: ChatProps) => {
   const chatRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -30,32 +23,35 @@ export const Chat = ({ badges }: ChatProps) => {
       console.log(`Connected to ${address}:${port}`);
     });
 
-    let bttvEmotes: Record<string, string> = {};
-
+    // api call for images
+    let badges: any = {};
+    let bttv: Record<string, string> = {};
     client.on("roomstate", async (channel, state) => {
       try {
+        // badges
         let response = await fetch(
-          "https://api.betterttv.net/3/cached/emotes/global"
+          "https://badges.twitch.tv/v1/badges/global/display"
         );
         let data = await response.json();
+        badges = data.badge_sets;
+        // global bttv
+        response = await fetch(
+          "https://api.betterttv.net/3/cached/emotes/global"
+        );
+        data = await response.json();
         for (let item of data) {
-          bttvEmotes[
-            item.code
-          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
         }
+        // channel bttv
         response = await fetch(
           `https://api.betterttv.net/3/cached/users/twitch/${state["room-id"]}`
         );
         data = await response.json();
         for (let item of data.channelEmotes) {
-          bttvEmotes[
-            item.code
-          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
         }
         for (let item of data.sharedEmotes) {
-          bttvEmotes[
-            item.code
-          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
         }
       } catch (error) {
         console.error(error);
@@ -64,40 +60,39 @@ export const Chat = ({ badges }: ChatProps) => {
 
     client.on("message", (channel, tags, message, self) => {
       if (self) return;
-
       if (chatRef.current && tags["display-name"]) {
+        // create div item
         const div = document.createElement("div");
         div.classList.add("item");
 
-        // handle badges
+        // create span badges
         if (tags.badges) {
           const span = document.createElement("span");
           span.classList.add("badges");
-
           Object.entries(tags.badges).forEach(([key, value]) => {
             const image = document.createElement("img");
-
             image.height = 18;
-            image.width = 18;
             image.src = badges[key].versions["1"].image_url_1x;
             image.classList.add("badge");
-
             span.appendChild(image);
           });
           div.appendChild(span);
         }
 
-        // handle name
+        // create span name
         const span = document.createElement("span");
         const b = document.createElement("b");
         span.classList.add("name");
         b.style.color = tags.color ?? "#000000";
+        if (!tags.color) {
+          b.classList.add("rainbowman");
+        }
         b.appendChild(document.createTextNode(tags["display-name"]));
         span.appendChild(b);
         span.appendChild(document.createTextNode(":"));
         div.appendChild(span);
 
-        // handle message
+        // create p message
         const p = document.createElement("p");
         p.classList.add("message");
         let emotes: Emote[] = [];
@@ -126,24 +121,19 @@ export const Chat = ({ badges }: ChatProps) => {
           image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0`;
           image.alt = emote.id;
           image.height = 28;
-          image.width = 28;
           images.push(image);
-
           parts.push(message.substring(emote.end + 1));
           lastEmoteIndex = emote.end + 1;
         }
-
-        // handle bttv
         for (let i = 0; i < parts.length; i++) {
           let split = parts[i].split(" ");
           for (let j = 0; j < split.length; j++) {
-            if (split[j] in bttvEmotes) {
+            if (split[j] in bttv) {
               const image = document.createElement("img");
               image.classList.add("emote");
-              image.src = bttvEmotes[split[j]];
+              image.src = bttv[split[j]];
               image.alt = split[j];
               image.height = 28;
-              image.width = 28;
               parts[i] = split.slice(0, j).join(" ") + " ";
               parts.splice(i + 1, 0, ` ${split.slice(j + 1).join(" ")}`);
               images.splice(i, 0, image);
@@ -152,13 +142,12 @@ export const Chat = ({ badges }: ChatProps) => {
             }
           }
         }
-
         for (let i = 0; i < parts.length; i++) {
           p.appendChild(document.createTextNode(parts[i]));
           if (images[i]) p.appendChild(images[i]);
         }
-
         div.appendChild(p);
+        div.normalize();
         chatRef.current.appendChild(div);
         if (chatRef.current.childNodes.length > 10) {
           chatRef.current.childNodes[0].remove();
