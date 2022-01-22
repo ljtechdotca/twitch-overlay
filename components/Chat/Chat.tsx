@@ -99,11 +99,7 @@ export const Chat = ({ badges }: ChatProps) => {
 
         // handle message
         const p = document.createElement("p");
-        // todo - add class name
         p.classList.add("message");
-
-        let newMessage = "";
-
         let emotes: Emote[] = [];
         let parts = [message];
         let images = [];
@@ -125,46 +121,42 @@ export const Chat = ({ badges }: ChatProps) => {
             lastEmoteIndex,
             emote.start
           );
-          images.push(
-            `<img alt=${emote.id} src='https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0' width='28' height='28' />`
-          );
+          const image = document.createElement("img");
+          image.classList.add("emote");
+          image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0`;
+          image.alt = emote.id;
+          image.height = 28;
+          image.width = 28;
+          images.push(image);
+
           parts.push(message.substring(emote.end + 1));
           lastEmoteIndex = emote.end + 1;
         }
-        console.log(parts, images, emotes);
 
         // handle bttv
         for (let i = 0; i < parts.length; i++) {
           let split = parts[i].split(" ");
-          console.log({ split });
           for (let j = 0; j < split.length; j++) {
             if (split[j] in bttvEmotes) {
+              const image = document.createElement("img");
+              image.classList.add("emote");
+              image.src = bttvEmotes[split[j]];
+              image.alt = split[j];
+              image.height = 28;
+              image.width = 28;
               parts[i] = split.slice(0, j).join(" ") + " ";
               parts.splice(i + 1, 0, ` ${split.slice(j + 1).join(" ")}`);
-              images.splice(
-                i,
-                0,
-                `<img alt=${split[j]} src=${
-                  bttvEmotes[split[j]]
-                } height='28' width='28' />`
-              );
+              images.splice(i, 0, image);
               i--;
+              break;
             }
           }
         }
 
-        // todo - no need to .replace if using textNode
         for (let i = 0; i < parts.length; i++) {
-          newMessage += parts[i]
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-          if (images[i]) newMessage += images[i];
+          p.appendChild(document.createTextNode(parts[i]));
+          if (images[i]) p.appendChild(images[i]);
         }
-        // todo - use create text node instead of innerHTML
-        p.innerHTML = newMessage;
 
         div.appendChild(p);
         chatRef.current.appendChild(div);

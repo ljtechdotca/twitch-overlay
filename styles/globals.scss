@@ -41,3 +41,7 @@ a {
   @extend .flex;
   word-break: break-word;
 }
+
+.emote {
+  object-fit: contain;
+}
