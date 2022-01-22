@@ -10,3 +10,34 @@ a {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   box-sizing: border-box;
 }
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.25rem;
+}
+
+.item {
+  @extend .flex;
+  padding-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.badges {
+  @extend .flex;
+}
+
+.badge {
+  display: grid;
+}
+
+.name {
+  @extend .flex;
+  font-weight: 700;
+}
+
+.message {
+  @extend .flex;
+  word-break: break-word;
+}

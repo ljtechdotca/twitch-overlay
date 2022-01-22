@@ -9,7 +9,7 @@ interface Emote {
 }
 
 export interface ChatProps {
-  badges: any;
+  badges: Record<string, any>;
 }
 
 export const Chat = ({ badges }: ChatProps) => {
@@ -30,22 +30,49 @@ export const Chat = ({ badges }: ChatProps) => {
       console.log(`Connected to ${address}:${port}`);
     });
 
+    let bttvEmotes: Record<string, string> = {};
+
+    client.on("roomstate", async (channel, state) => {
+      try {
+        let response = await fetch(
+          "https://api.betterttv.net/3/cached/emotes/global"
+        );
+        let data = await response.json();
+        for (let item of data) {
+          bttvEmotes[
+            item.code
+          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+        }
+        response = await fetch(
+          `https://api.betterttv.net/3/cached/users/twitch/${state["room-id"]}`
+        );
+        data = await response.json();
+        for (let item of data.channelEmotes) {
+          bttvEmotes[
+            item.code
+          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+        }
+        for (let item of data.sharedEmotes) {
+          bttvEmotes[
+            item.code
+          ] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
     client.on("message", (channel, tags, message, self) => {
       if (self) return;
 
       if (chatRef.current && tags["display-name"]) {
-        const itemDiv = document.createElement("div");
-
-        itemDiv.style.display = "flex";
-        itemDiv.style.flexWrap = "wrap";
-        itemDiv.style.columnGap = "0.25rem";
-        itemDiv.style.alignItems = "center";
-        itemDiv.style.paddingBottom = "1rem";
-        itemDiv.style.fontSize = "1.25rem";
+        const div = document.createElement("div");
+        div.classList.add("item");
 
         // handle badges
         if (tags.badges) {
-          const badgesSpan = document.createElement("span");
+          const span = document.createElement("span");
+          span.classList.add("badges");
 
           Object.entries(tags.badges).forEach(([key, value]) => {
             const image = document.createElement("img");
@@ -53,88 +80,98 @@ export const Chat = ({ badges }: ChatProps) => {
             image.height = 18;
             image.width = 18;
             image.src = badges[key].versions["1"].image_url_1x;
-            image.style.marginRight = "0.25rem";
+            image.classList.add("badge");
 
-            badgesSpan.appendChild(image);
+            span.appendChild(image);
           });
-          itemDiv.appendChild(badgesSpan);
+          div.appendChild(span);
         }
 
         // handle name
-        const nameSpan = document.createElement("span");
-        const colorSpan = document.createElement("span");
-        colorSpan.style.color = tags.color ?? "#000000";
-        colorSpan.style.fontWeight = "700";
-        colorSpan.appendChild(document.createTextNode(tags["display-name"]));
-        nameSpan.style.fontWeight = "700";
-        nameSpan.style.display = "flex";
-        nameSpan.style.columnGap = "0.25rem";
-        nameSpan.style.alignItems = "center";
-        nameSpan.appendChild(colorSpan);
-        nameSpan.appendChild(document.createTextNode(":  "));
-        itemDiv.appendChild(nameSpan);
+        const span = document.createElement("span");
+        const b = document.createElement("b");
+        span.classList.add("name");
+        b.style.color = tags.color ?? "#000000";
+        b.appendChild(document.createTextNode(tags["display-name"]));
+        span.appendChild(b);
+        span.appendChild(document.createTextNode(":"));
+        div.appendChild(span);
 
         // handle message
-        const messageSpan = document.createElement("span");
-        messageSpan.style.display = "flex";
-        messageSpan.style.flexWrap = "wrap";
-        messageSpan.style.columnGap = "0.25rem";
-        messageSpan.style.alignItems = "center";
-        messageSpan.style.wordBreak = "break-word";
+        const p = document.createElement("p");
+        // todo - add class name
+        p.classList.add("message");
+
         let newMessage = "";
-        if (tags.emotes) {
-          let emotes: Emote[] = [];
-          let parts = [message];
-          let images = [];
-          for (let id in tags.emotes) {
-            for (let range of tags.emotes[id]) {
-              const [start, end] = range.split("-");
-              const emote: Emote = {
-                id,
-                start: parseInt(start),
-                end: parseInt(end),
-              };
-              emotes.push(emote);
+
+        let emotes: Emote[] = [];
+        let parts = [message];
+        let images = [];
+        for (let id in tags.emotes) {
+          for (let range of tags.emotes[id]) {
+            const [start, end] = range.split("-");
+            const emote: Emote = {
+              id,
+              start: parseInt(start),
+              end: parseInt(end),
+            };
+            emotes.push(emote);
+          }
+        }
+        emotes.sort((a, b) => a.start - b.end);
+        let lastEmoteIndex = 0;
+        for (let emote of emotes) {
+          parts[parts.length - 1] = message.substring(
+            lastEmoteIndex,
+            emote.start
+          );
+          images.push(
+            `<img alt=${emote.id} src='https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0' width='28' height='28' />`
+          );
+          parts.push(message.substring(emote.end + 1));
+          lastEmoteIndex = emote.end + 1;
+        }
+        console.log(parts, images, emotes);
+
+        // handle bttv
+        for (let i = 0; i < parts.length; i++) {
+          let split = parts[i].split(" ");
+          console.log({ split });
+          for (let j = 0; j < split.length; j++) {
+            if (split[j] in bttvEmotes) {
+              parts[i] = split.slice(0, j).join(" ") + " ";
+              parts.splice(i + 1, 0, ` ${split.slice(j + 1).join(" ")}`);
+              images.splice(
+                i,
+                0,
+                `<img alt=${split[j]} src=${
+                  bttvEmotes[split[j]]
+                } height='28' width='28' />`
+              );
+              i--;
             }
           }
-          emotes.sort((a, b) => a.start - b.end);
-          let lastEmoteIndex = 0;
-          for (let emote of emotes) {
-            parts[parts.length - 1] = message.substring(
-              lastEmoteIndex,
-              emote.start
-            );
-            images.push(
-              `<img src='https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0' width='28' height='28' />`
-            );
-            parts.push(message.substring(emote.end + 1));
-            lastEmoteIndex = emote.end + 1;
-          }
-          console.log(parts, images, emotes);
-          // todo : bttv
-          // for (let i = 0; i < parts.length; i++) {
-          //   let split = parts[i].split(" ");
-          //   for (let j = 0; j < split.length; j++) {}
-          // }
-          for (let i = 0; i < parts.length; i++) {
-            newMessage += parts[i]
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#039;");
-            if (images[i]) newMessage += images[i];
-          }
-          messageSpan.innerHTML = newMessage;
-        } else {
-          messageSpan.appendChild(document.createTextNode(message));
         }
-        itemDiv.appendChild(messageSpan);
-        chatRef.current.appendChild(itemDiv);
+
+        // todo - no need to .replace if using textNode
+        for (let i = 0; i < parts.length; i++) {
+          newMessage += parts[i]
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+          if (images[i]) newMessage += images[i];
+        }
+        // todo - use create text node instead of innerHTML
+        p.innerHTML = newMessage;
+
+        div.appendChild(p);
+        chatRef.current.appendChild(div);
         if (chatRef.current.childNodes.length > 10) {
           chatRef.current.childNodes[0].remove();
         }
-        itemDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+        div.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
