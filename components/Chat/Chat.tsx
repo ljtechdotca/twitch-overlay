@@ -71,8 +71,11 @@ export const Chat = ({}: ChatProps) => {
           span.classList.add("badges");
           Object.entries(tags.badges).forEach(([key, value]) => {
             const image = document.createElement("img");
+            console.log(badges[key]);
             image.height = 18;
-            image.src = badges[key].versions["1"].image_url_1x;
+            image.src = badges[key].versions["1"]
+              ? badges[key].versions["1"].image_url_1x
+              : badges[key].versions["0"].image_url_1x;
             image.classList.add("badge");
             span.appendChild(image);
           });
