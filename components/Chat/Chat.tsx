@@ -86,10 +86,10 @@ export const Chat = ({}: ChatProps) => {
         const span = document.createElement("span");
         const b = document.createElement("b");
         span.classList.add("name");
-        b.style.color = tags.color ?? "#ffffff";
+        b.style.color = tags.color ?? "red";
         b.appendChild(document.createTextNode(tags["display-name"]));
         span.appendChild(b);
-        span.appendChild(document.createTextNode(":"));
+        span.appendChild(document.createTextNode(": "));
         div.appendChild(span);
 
         // create p message
