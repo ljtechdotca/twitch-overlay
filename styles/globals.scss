@@ -15,26 +15,30 @@ a {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  column-gap: 0.25rem;
+  margin-right: 0.25rem;
 }
 
 .item {
   @extend .flex;
   padding-bottom: 1rem;
   font-size: 1.25rem;
+  margin-right: 0.25rem;
 }
 
 .badges {
   @extend .flex;
+  margin-right: 0.25rem;
 }
 
 .badge {
   display: grid;
+  margin-right: 0.25rem;
 }
 
 .name {
   @extend .flex;
   font-weight: 700;
+  margin-right: 0.25rem;
 }
 
 .message {
