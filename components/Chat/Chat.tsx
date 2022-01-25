@@ -86,10 +86,7 @@ export const Chat = ({}: ChatProps) => {
         const span = document.createElement("span");
         const b = document.createElement("b");
         span.classList.add("name");
-        b.style.color = tags.color ?? "#000000";
-        if (!tags.color) {
-          b.classList.add("rainbowman");
-        }
+        b.style.color = tags.color ?? "#ffffff";
         b.appendChild(document.createTextNode(tags["display-name"]));
         span.appendChild(b);
         span.appendChild(document.createTextNode(":"));
