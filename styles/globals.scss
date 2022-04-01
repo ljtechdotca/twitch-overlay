@@ -13,10 +13,7 @@ a {
 
 .chat_container {
   display: grid;
-  border-top-right-radius: 0.5rem;
-  border-top-left-radius: 0.5rem;
   border-radius: 0.5rem;
-
   overflow: hidden;
   margin-bottom: 1rem;
 }
@@ -24,7 +21,7 @@ a {
 .chat_item {
   padding: 1rem 1rem 0;
   background-color: rgba(248, 248, 248, 0.5);
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(4px);
   display: inline;
   align-items: flex-end;
   padding-bottom: 1rem;
@@ -37,7 +34,7 @@ a {
   word-break: break-word;
   white-space: pre-wrap;
   background-color: rgba(32, 33, 36, 0.5);
-  backdrop-filter: blur(1rem);
+  backdrop-filter: blur(4px);
   padding: 1rem;
   text-shadow: 0 0 black;
   code {
