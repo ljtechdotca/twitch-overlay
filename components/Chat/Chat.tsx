@@ -69,7 +69,7 @@ export const Chat = ({}: ChatProps) => {
       div.normalize();
       chatRef.current.appendChild(div);
 
-      setTimeout(() => div.remove(), 60000);
+      setTimeout(() => div.remove(), 1000000000);
       div.scrollIntoView({ behavior: "smooth", block: "end" });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

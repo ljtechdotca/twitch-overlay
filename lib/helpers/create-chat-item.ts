@@ -13,6 +13,8 @@ export const createChatItem = (
   let hasCode: RegExpMatchArray | null = message.match(`\`((.|\n)*)\``);
 
   const div = document.createElement("div");
+  div.classList.add("chat_container");
+
   const span = document.createElement("span");
   span.classList.add("chat_item");
 
