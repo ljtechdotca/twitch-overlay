@@ -18,7 +18,6 @@ export const createChatItem = (
   const span = document.createElement("span");
   span.classList.add("chat_item");
 
-  console.log({ tags });
   const badgesSpan = createBadges(tags, twitchBadges);
   span.appendChild(badgesSpan);
 

@@ -15,6 +15,7 @@ export const createDisplayName = (tags: ChatUserstate) => {
 
   b.appendChild(document.createTextNode(tags["display-name"]));
   span.appendChild(b);
+  span.appendChild(document.createTextNode(": "));
 
   return span;
 };

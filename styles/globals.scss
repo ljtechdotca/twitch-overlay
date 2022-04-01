@@ -13,26 +13,23 @@ a {
 
 .chat_container {
   display: grid;
-  border-radius: 0.5rem;
-  overflow: hidden;
+  // border-radius: 0.5rem;
+  // overflow: hidden;
   margin-bottom: 1rem;
 }
 
 .chat_item {
-  padding: 0.5rem 0.5rem 0;
-  background-color: rgba(248, 248, 248, 0.9);
+  padding: 0.75rem;
   display: inline;
   align-items: flex-end;
-  padding-bottom: 1rem;
   font-size: 1.25rem;
 }
 
 .pre_code {
   word-break: break-word;
   white-space: pre-wrap;
-  background-color: rgba(32, 33, 36, 0.9);
-  padding: 0.5rem;
-  text-shadow: 0 0 black;
+  padding: 0.75rem;
+  // text-shadow: 0 0 black;
   code {
     font-size: 1rem;
     font-family: "Courier New", Courier, monospace;

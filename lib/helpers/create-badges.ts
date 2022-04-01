@@ -4,7 +4,6 @@ export const createBadges = (
   tags: ChatUserstate,
   twitchBadges: Record<string, any>
 ) => {
-  console.log({ tags });
   const span = document.createElement("span");
   span.classList.add("badges");
   if (tags.badges) {
