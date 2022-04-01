@@ -19,8 +19,8 @@ a {
 }
 
 .chat_item {
-  padding: 1rem 1rem 0;
-  background-color: rgba(248, 248, 248, 0.5);
+  padding: 0.5rem 0.5rem 0;
+  background-color: rgba(248, 248, 248, 0.9);
   display: inline;
   align-items: flex-end;
   padding-bottom: 1rem;
@@ -30,8 +30,8 @@ a {
 .pre_code {
   word-break: break-word;
   white-space: pre-wrap;
-  background-color: rgba(32, 33, 36, 0.5);
-  padding: 1rem;
+  background-color: rgba(32, 33, 36, 0.9);
+  padding: 0.5rem;
   text-shadow: 0 0 black;
   code {
     font-size: 1rem;
