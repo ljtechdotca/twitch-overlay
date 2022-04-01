@@ -1,2 +1,5 @@
-☐ refactor "client on message" event
+☐ fix emotes algo
+  - use old method where a message and emotes array run parralel
 
+☐ styles on message
+  - fill the container for the codeblock

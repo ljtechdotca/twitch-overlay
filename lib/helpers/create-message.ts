@@ -1,8 +1,6 @@
 import { Emote } from "@types";
 import { ChatUserstate } from "tmi.js";
 
-// task : refactor
-
 export const createMessage = (
   bttv: Record<string, any>,
   message: string,
@@ -27,10 +25,11 @@ export const createMessage = (
   emotes.sort((a, b) => a.start - b.end);
 
   // handles emote img and injection
-  let emotesAndText: Array<string | HTMLImageElement> = [message];
+  let twitchMessages: Array<string> = [message];
+  let twitchEmotes: Array<HTMLImageElement> = [];
   let lastEmoteIndex = 0;
   for (let emote of emotes) {
-    emotesAndText[emotesAndText.length - 1] = message.substring(
+    twitchMessages[twitchMessages.length - 1] = message.substring(
       lastEmoteIndex,
       emote.start
     );
@@ -39,15 +38,15 @@ export const createMessage = (
     image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0`;
     image.alt = emote.id;
     image.height = 28;
-    emotesAndText.push(image);
-    emotesAndText.push(message.substring(emote.end + 1));
+
+    twitchEmotes.push(image);
+    twitchMessages.push(message.substring(emote.end + 1));
     lastEmoteIndex = emote.end + 1;
   }
 
   // handles bttv emote injection
-  for (let i = 0; i < emotesAndText.length; i++) {
-    let item = emotesAndText[i];
-    if (typeof item !== "string") break;
+  for (let i = 0; i < twitchMessages.length; i++) {
+    let item = twitchMessages[i];
     let split = item.split(" ");
     for (let j = 0; j < split.length; j++) {
       if (split[j] in bttv) {
@@ -56,24 +55,28 @@ export const createMessage = (
         image.src = bttv[split[j]];
         image.alt = split[j];
         image.height = 28;
-        emotesAndText[i] = split.slice(0, j).join(" ") + " ";
-        emotesAndText.splice(i + 1, 0, ` ${split.slice(j + 1).join(" ")}`);
-        emotesAndText.splice(i, 0, image);
+        twitchMessages[i] = split.slice(0, j).join(" ") + " ";
+        twitchMessages.splice(i + 1, 0, ` ${split.slice(j + 1).join(" ")}`);
+        twitchEmotes.splice(i, 0, image);
         i--;
         break;
       }
     }
   }
 
-  // appends emotesAndText to the message span
-  for (let i = 0; i < emotesAndText.length; i++) {
-    const item = emotesAndText[i];
-    if (typeof item === "string") {
-      span.appendChild(document.createTextNode(item));
+  // combine messages and emotes together
+  let resultArray: Array<Text | HTMLImageElement> = [];
+
+  for (let i = 0; i < twitchMessages.length; i++) {
+    resultArray.push(document.createTextNode(twitchMessages[i]));
+    if (twitchEmotes[i]) {
+      resultArray.push(twitchEmotes[i]);
     }
-    if (item instanceof Node) {
-      span.appendChild(item);
-    }
+  }
+
+  // append the items to the message span
+  for (let result of resultArray) {
+    span.appendChild(result);
   }
 
   return span;
