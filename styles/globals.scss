@@ -13,9 +13,7 @@ a {
 
 .chat_container {
   display: grid;
-  // border-radius: 0.5rem;
-  // overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .chat_item {
@@ -29,7 +27,6 @@ a {
   word-break: break-word;
   white-space: pre-wrap;
   padding: 0.75rem;
-  // text-shadow: 0 0 black;
   code {
     font-size: 1rem;
     font-family: "Courier New", Courier, monospace;
