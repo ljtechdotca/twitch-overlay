@@ -7,7 +7,7 @@ import { createPreCode } from "./create-pre-code";
 export const createChatItem = (
   bttv: Record<string, any>,
   message: string,
-  tags: ChatUserstate,
+  context: ChatUserstate,
   twitchBadges: Record<string, any>
 ) => {
   let hasCode: RegExpMatchArray | null = message.match(`\`((.|\n)*)\``);
@@ -18,17 +18,35 @@ export const createChatItem = (
   const span = document.createElement("span");
   span.classList.add("chat_item");
 
-  const badgesSpan = createBadges(tags, twitchBadges);
+  const badgesSpan = createBadges(context, twitchBadges);
   span.appendChild(badgesSpan);
 
-  const displayNameSpan = createDisplayName(tags);
+  const displayNameSpan = createDisplayName(context);
   span.appendChild(displayNameSpan);
 
   const messageSpan = createMessage(
     bttv,
     hasCode ? message.replace(hasCode[0], "") : message,
-    tags
+    context
   );
+
+  console.log({ context });
+
+  if (
+    context["message-type"] === "chat" &&
+    context["msg-id"] &&
+    context["msg-id"].startsWith("highlighted")
+  ) {
+    messageSpan.classList.add("highlighted");
+  }
+
+  if (
+    context["custom-reward-id"] &&
+    context["custom-reward-id"] === "aa76b391-7267-4399-92a6-7022277e9a78"
+  ) {
+    console.log("THIS IS A STRETCH");
+    messageSpan.classList.add("reward");
+  }
 
   span.appendChild(messageSpan);
   div.appendChild(span);

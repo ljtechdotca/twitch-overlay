@@ -58,16 +58,18 @@ export const Chat = ({}: ChatProps) => {
       }
     });
 
-    client.on("message", (channel, tags, message, self) => {
+    client.on("message", (channel, context, message, self) => {
       if (self || !chatRef.current) return;
+
+      const div = createChatItem(bttv, message, context, twitchBadges);
+
+      div.normalize();
+
+      chatRef.current.appendChild(div);
+
       if (chatRef.current.childNodes.length > 10) {
         chatRef.current.childNodes[0].remove();
       }
-
-      const div = createChatItem(bttv, message, tags, twitchBadges);
-
-      div.normalize();
-      chatRef.current.appendChild(div);
 
       setTimeout(() => div.remove(), 60000);
       div.scrollIntoView({ behavior: "smooth", block: "end" });
