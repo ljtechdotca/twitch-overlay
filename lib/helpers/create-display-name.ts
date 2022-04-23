@@ -7,11 +7,7 @@ export const createDisplayName = (tags: ChatUserstate) => {
   const b = document.createElement("b");
   b.classList.add("display_name");
 
-  b.style.color =
-    tags.color ??
-    ["red", "orange", "yellow", "green", "blue", "indigo", "violet"][
-      Math.floor(Math.random() * 7)
-    ];
+  b.style.color = tags.color ?? "dodgerblue";
 
   b.appendChild(document.createTextNode(tags["display-name"]));
   span.appendChild(b);

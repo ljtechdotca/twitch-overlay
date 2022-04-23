@@ -44,7 +44,6 @@ export const createChatItem = (
     context["custom-reward-id"] &&
     context["custom-reward-id"] === "aa76b391-7267-4399-92a6-7022277e9a78"
   ) {
-    console.log("THIS IS A STRETCH");
     messageSpan.classList.add("reward");
   }
 
