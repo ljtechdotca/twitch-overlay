@@ -1,7 +1,6 @@
 import styles from "./Footer.module.scss";
-export interface FooterProps {}
 
-export const Footer = ({}: FooterProps) => {
+export const Footer = ({}) => {
   return (
     <div className={styles.root}>
       <div className={styles.container}>

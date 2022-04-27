@@ -1,11 +1,13 @@
-import { createChatItem } from "@lib/helpers/create-chat-item";
+import {
+  createChatItem,
+  fetchBttvEmotes,
+  fetchTwitchBadges,
+} from "@lib/helpers";
 import { useEffect, useRef } from "react";
 import tmi from "tmi.js";
 import styles from "./Chat.module.scss";
 
-export interface ChatProps {}
-
-export const Chat = ({}: ChatProps) => {
+export const Chat = ({}) => {
   const chatRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -23,36 +25,13 @@ export const Chat = ({}: ChatProps) => {
       console.log(`Connected to ${address}:${port}`);
     });
 
-    // api call for images
-    let twitchBadges: any = {};
+    // initialize stream overlay with emotes from bttv and badges from twitch api
     let bttv: Record<string, string> = {};
+    let twitchBadges: any = {};
     client.on("roomstate", async (channel, state) => {
       try {
-        // badges
-        let response = await fetch(
-          "https://badges.twitch.tv/v1/badges/global/display"
-        );
-        let data = await response.json();
-        twitchBadges = data.badge_sets;
-        // global bttv
-        response = await fetch(
-          "https://api.betterttv.net/3/cached/emotes/global"
-        );
-        data = await response.json();
-        for (let item of data) {
-          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
-        }
-        // channel bttv channel and global
-        response = await fetch(
-          `https://api.betterttv.net/3/cached/users/twitch/${state["room-id"]}`
-        );
-        data = await response.json();
-        for (let item of data.channelEmotes) {
-          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
-        }
-        for (let item of data.sharedEmotes) {
-          bttv[item.code] = `https://cdn.betterttv.net/emote/${item.id}/3x`;
-        }
+        bttv = await fetchBttvEmotes(state);
+        twitchBadges = await fetchTwitchBadges();
       } catch (error) {
         console.error(error);
       }
@@ -60,17 +39,12 @@ export const Chat = ({}: ChatProps) => {
 
     client.on("message", (channel, context, message, self) => {
       if (self || !chatRef.current) return;
-
       const div = createChatItem(bttv, message, context, twitchBadges);
-
       div.normalize();
-
       chatRef.current.appendChild(div);
-
       if (chatRef.current.childNodes.length > 10) {
         chatRef.current.childNodes[0].remove();
       }
-
       setTimeout(() => div.remove(), 60000);
       div.scrollIntoView({ behavior: "smooth", block: "end" });
     });

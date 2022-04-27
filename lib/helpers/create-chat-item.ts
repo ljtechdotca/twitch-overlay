@@ -30,8 +30,6 @@ export const createChatItem = (
     context
   );
 
-  console.log({ context });
-
   if (
     context["message-type"] === "chat" &&
     context["msg-id"] &&
