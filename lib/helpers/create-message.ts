@@ -49,7 +49,7 @@ export const createMessage = (
     let item = twitchMessages[i];
     let split = item.split(" ");
     for (let j = 0; j < split.length; j++) {
-      if (split[j] in bttv) {
+      if (bttv.hasOwnProperty(split[j])) {
         const image = document.createElement("img");
         image.classList.add("emote");
         image.src = bttv[split[j]];

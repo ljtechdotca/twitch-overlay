@@ -48,7 +48,10 @@ export const Chat = ({}) => {
       setTimeout(() => div.remove(), 60000);
       div.scrollIntoView({ behavior: "smooth", block: "end" });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      client.disconnect();
+    };
   }, []);
 
   return (
